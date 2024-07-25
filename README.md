@@ -110,6 +110,8 @@ Parses an SVG string and returns a JSON representation of the SVG structure.
 - `svgString`: A string containing valid SVG markup.
 - Returns: An `SVGNode` object representing the parsed SVG structure.
 
+## Types
+
 ```ts
 interface SVGNode {
   type: 'element' | 'text';
@@ -125,6 +127,16 @@ interface SVGNode {
 This library has a test coverage of over 90%. We use Vitest for running tests and generating coverage reports.
 
 To run the tests:
+
+```bash
+npm test
+```
+
+To view the test coverage report:
+
+```bash
+npm run coverage
+```
 
 您说得对，我应该将之前讨论的所有内容整合到一个完整的 README.md 文档中。以下是一个更全面的版本，包含了我们之前讨论的所有重要细节：
 
@@ -259,13 +271,21 @@ This library has a test coverage of over 90%. We use Vitest for running tests an
 
 To run the tests:
 
-```bash
+```
+bash
+
+Copy
+
 npm test
 ```
 
 To view the test coverage report:
 
-```bash
+```
+bash
+
+Copy
+
 npm run coverage
 ```
 
@@ -300,6 +320,8 @@ If you encounter any issues or have suggestions for improvements, please open an
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+------
 
 Made with ❤️ by [Your Name/Organization]
 
