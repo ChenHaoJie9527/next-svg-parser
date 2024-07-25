@@ -1,5 +1,5 @@
 import { SVGNode } from "./types"
-import { trim } from "lodash"
+// import { trim } from "lodash"
 
 export function parserSVG(svgContent: string): SVGNode | null {
     const parser = new DOMParser()
@@ -9,9 +9,9 @@ export function parserSVG(svgContent: string): SVGNode | null {
     return json
 }
 
-export function domToJson(node: Node) {
+function domToJson(node: Node) {
     if (node.nodeType === Node.TEXT_NODE) {
-        const content = trim(node.textContent || '')
+        const content = node.textContent?.trim()
         return content ? { type: 'text', content } : null
     }
 
