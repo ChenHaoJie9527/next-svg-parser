@@ -1,17 +1,19 @@
 {
   "name": "next-svg-parser",
   "version": "1.0.0",
-  "description": "",
+  "description": "A robust SVG to JSON parser built with TypeScript",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
   "browser": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "build": "vite build",
+    "coverage": "vitest run --coverage"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["svg", "parser", "json", "typescript", "converter"],
+  "author": "momotom(ChenHaoJie9527) a18520145493@gmail.com",
   "license": "MIT",
   "devDependencies": {
     "@types/lodash": "^4.17.7",
@@ -30,5 +32,21 @@
   "dependencies": {
     "jsdom": "^24.1.1",
     "lodash": "^4.17.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChenHaoJie9527/next-svg-parser"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "homepage": "https://github.com/ChenHaoJie9527/next-svg-parser/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/ChenHaoJie9527/next-svg-parser/issues"
   }
 }
