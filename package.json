@@ -1,0 +1,34 @@
+{
+  "name": "next-svg-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "browser": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.12",
+    "@vitest/coverage-v8": "^2.0.4",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.4",
+    "vitest": "^2.0.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "dependencies": {
+    "jsdom": "^24.1.1",
+    "lodash": "^4.17.21"
+  }
+}
