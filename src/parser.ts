@@ -1,5 +1,4 @@
 import { SVGNode } from "./types"
-// import { trim } from "lodash"
 
 export function parserSVG(svgContent: string): SVGNode | null {
     const parser = new DOMParser()

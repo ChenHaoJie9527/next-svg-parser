@@ -6,11 +6,11 @@ export default defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
-            name: "index",
+            name: "next-svg-parser",
             fileName(format, entryName) {
                 return `index.${format}.js`
             },
-            formats: ["es"]
+            formats: ["es", "umd"]
         },
         rollupOptions: {
             external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise'],
@@ -22,7 +22,7 @@ export default defineConfig({
         // 明确指定构建输出目录
         outDir: 'dist',
         // 构建前清空输出目录
-        emptyOutDir: true,
+        emptyOutDir: false,
         minify: 'terser',
         terserOptions: {
             compress: {
