@@ -1,7 +1,6 @@
 import path from "path"
 import { defineConfig } from "vitest/config"
 import { terser } from "rollup-plugin-terser"
-import { visualizer } from "rollup-plugin-visualizer"
 
 export default defineConfig({
     build: {
@@ -17,12 +16,6 @@ export default defineConfig({
             external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise'],
             plugins: [
                 terser(),
-                visualizer({
-                    filename: 'stats.html',
-                    open: true,
-                    gzipSize: true,
-                    brotliSize: true
-                }),
             ],
         },
         sourcemap: true,
