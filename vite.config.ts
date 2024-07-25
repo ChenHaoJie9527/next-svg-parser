@@ -11,21 +11,19 @@ export default defineConfig({
             fileName(format, entryName) {
                 return `index.${format}.js`
             },
-            formats: ["es", "umd"]
+            formats: ["es"]
         },
         rollupOptions: {
             external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise'],
-            plugins: [terser(), visualizer({
-                filename: 'stats.html',
-                open: true,
-                gzipSize: true,
-                brotliSize: true
-            })],
-            // output: {
-            //     globals: {
-            //         lodash: '_'
-            //     }
-            // }
+            plugins: [
+                terser(),
+                visualizer({
+                    filename: 'stats.html',
+                    open: true,
+                    gzipSize: true,
+                    brotliSize: true
+                }),
+            ],
         },
         sourcemap: true,
         // 明确指定构建输出目录
