@@ -22,6 +22,26 @@ A robust and efficient SVG to JSON parser built with TypeScript, leveraging the 
 npm install next-svg-parser
 ```
 
+or
+
+```bash
+pnpm install next-svg-parser
+```
+
+or
+
+```bash
+yarn add next-svg-parser
+```
+
+## Current Version
+
+The current stable version of next-svg-parser is 1.0.0. This version includes [brief description of key features or changes].
+
+## address
+
+For more information, see the [npm package page](https://www.npmjs.com/package/next-svg-parser).
+
 ## Usage
 
 ```ts
