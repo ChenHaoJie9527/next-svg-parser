@@ -1,3 +1,5 @@
+<p align="center">   <img src="public/logo.svg" alt="next-svg-parser logo" width="200" height="200"> </p>
+
 # next-svg-parser
 
 [![npm version](https://badge.fury.io/js/next-svg-parser.svg)](https://badge.fury.io/js/next-svg-parser)
