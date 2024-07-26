@@ -13,7 +13,7 @@ export default defineConfig({
             formats: ["es", "umd"]
         },
         rollupOptions: {
-            external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise'],
+            external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise', 'assets/**/*'],
             plugins: [
                 terser(),
             ],
@@ -42,6 +42,6 @@ export default defineConfig({
         environment: 'jsdom',
         coverage: {
             enabled: true,
-        }
+        },
     }
 })

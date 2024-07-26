@@ -4,15 +4,8 @@ export async function parserSVG(svgContent: string): Promise<SVGNode | null> {
     const fullSvgContent = ensureFullSVG(svgContent)
     let doc: Document;
 
-    if (typeof window === 'undefined') {
-        const { JSDOM } = await import('jsdom')
-        const dom = new JSDOM(fullSvgContent, { contentType: 'image/svg+xml' })
-        doc = dom.window.document;
-    } else {
-        const parser = new DOMParser()
-        doc = parser.parseFromString(fullSvgContent, "image/svg+xml")
-
-    }
+    const parser = new DOMParser()
+    doc = parser.parseFromString(fullSvgContent, "image/svg+xml")
 
     const errorNode = doc.querySelector('parsererror')
     if (errorNode) {
@@ -25,7 +18,7 @@ export async function parserSVG(svgContent: string): Promise<SVGNode | null> {
 
 function ensureFullSVG(svgContent: string): string {
     const trimmed = svgContent.trim()
-    const svgRegex  = /^\s*<svg(?:\s+[^>]*)?>[\s\S]*<\/svg>\s*$/i;
+    const svgRegex = /^\s*<svg(?:\s+[^>]*)?>[\s\S]*<\/svg>\s*$/i;
     // 检查是否已经是完整的 SVG
     if (svgRegex.test(trimmed)) {
         return trimmed
