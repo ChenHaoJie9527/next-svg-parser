@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "jsdom": "^24.1.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "memfs": "^4.9.4"
   },
   "repository": {
     "type": "git",

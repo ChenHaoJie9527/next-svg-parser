@@ -1,6 +1,32 @@
-import { expect, describe, it } from "vitest"
+import { expect, describe, it, vi, beforeEach, afterEach } from "vitest"
 import { parserSVG } from "../parser"
-import { log } from "console";
+
+const svgImport = `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- 背景圆形 -->
+  <circle cx="100" cy="100" r="90" fill="#f0f0f0"/>
+  
+  <!-- SVG 符号 (左侧) -->
+  <text x="40" y="110" font-family="monospace" font-size="40" fill="#4a4a4a">&lt;svg&gt;</text>
+  
+  <!-- 箭头 (中间) -->
+  <path d="M80 100 L120 100 M110 90 L120 100 L110 110" stroke="#2196f3" stroke-width="4" fill="none"/>
+  
+  <!-- JSON 符号 (右侧) -->
+  <text x="130" y="110" font-family="monospace" font-size="40" fill="#4a4a4a">{}</text>
+  
+  <!-- 解析线条动画 -->
+  <path d="M30 130 Q100 170 170 130" stroke="#2196f3" stroke-width="2" fill="none" stroke-dasharray="5,5">
+    <animate attributeName="stroke-dashoffset" from="10" to="0" dur="2s" repeatCount="indefinite"/>
+  </path>
+</svg>
+`
+
+vi.mock("../assets/test.svg", () => {
+    return {
+        default: svgImport
+    }
+})
 
 describe('parser', () => {
     it('should parse a simple SVG element', async () => {
@@ -282,4 +308,17 @@ describe('parser', () => {
         expect(result?.tagName).toBe('svg');
         expect(result?.attributes?.xmlns).toBe('http://www.w3.org/2000/svg');
     });
+    it('should parse SVG imported as a string in SPA', async () => {
+        const imported = await import("../assets/test.svg")
+        const result = await parserSVG(imported.default)
+        expect(result?.type).toBe('element')
+        expect(result?.tagName).toBe('svg')
+        expect(result?.attributes).toEqual({
+            xmlns: 'http://www.w3.org/2000/svg',
+            width: '200',
+            height: '200',
+            viewBox: '0 0 200 200',
+        })
+        expect(result?.children).toHaveLength(5)
+    })
 })
