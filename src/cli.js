@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // const fs = require('fs');
-import fs from "fs";
+import fs from "fs/promises";
 // const { parserSVG } = require('./index'); // 你的主要解析函数
 import { parserSVG } from "./index";
 console.log('11111111111111111');
