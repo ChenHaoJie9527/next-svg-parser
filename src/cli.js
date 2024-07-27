@@ -18,9 +18,9 @@ if (!inputFile || !outputFile) {
 try {
   const svgContent = fs.readFileSync(inputFile, "utf8");
   console.log('svgContent =>', svgContent);
-  const parsedSVG = parserSVG(svgContent);
-  console.log('parsedSVG >', parsedSVG);
-  fs.writeFileSync(outputFile, parsedSVG);
+  const jsonData = parserSVG(svgContent);
+  console.log('jsonData >', jsonData);
+  fs.writeFile(outputFile, JSON.stringify(jsonData, null, 2));
   console.log(`Successfully parsed ${inputFile} to ${outputFile}`);
 } catch (error) {
   console.error("Error:", error.message);
