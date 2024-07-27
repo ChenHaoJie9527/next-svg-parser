@@ -7,11 +7,11 @@ export default defineConfig({
         lib: {
             entry: {
                 index: path.resolve(__dirname, "src/index.ts"),
-                cli: path.resolve(__dirname, "src/cli.ts")
+                cli: path.resolve(__dirname, "src/cli.js")
             },
             name: "next-svg-parser",
             fileName: (format, entryName) => `${entryName}.${format}.js`,
-            formats: ["es", "umd"]
+            formats: ["es"]
         },
         rollupOptions: {
             external: ['vitest', 'fs', 'path', "xmldom", 'fs/promise', "memfs", 'assets/**/*', "commander"],
