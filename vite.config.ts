@@ -10,7 +10,7 @@ export default defineConfig({
                 cli: path.resolve(__dirname, "src/cli.js")
             },
             name: "next-svg-parser",
-            fileName: (format, entryName) => entryName === 'cli' ? 'cli.js' : `${entryName}.${format}.js`,
+            fileName: (format, entryName) => entryName === 'cli' ? 'cli.cjs' : `${entryName}.${format}.js`,
             formats: ['es', 'cjs']
         },
         rollupOptions: {
