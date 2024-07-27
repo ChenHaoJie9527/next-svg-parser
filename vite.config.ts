@@ -26,7 +26,7 @@ export default defineConfig({
             }
         },
         target: 'node16',
-        sourcemap: false,
+        sourcemap: true,
         // 明确指定构建输出目录
         outDir: 'dist',
         // 构建前清空输出目录
@@ -34,7 +34,7 @@ export default defineConfig({
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: true,
+                // drop_console: true,
                 drop_debugger: true,
                 ecma: 2016
             },
