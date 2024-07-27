@@ -31,65 +31,53 @@ vi.mock("../assets/test.svg", () => {
 describe('parser', () => {
     it('should parse a simple SVG element', async () => {
         const svg = '<svg width="100" height="100"></svg>';
-        const result = await parserSVG(svg)
+        const result = parserSVG(svg)
         expect(result).toEqual({
             type: 'element',
             tagName: 'svg',
             attributes: {
                 width: '100',
                 height: '100'
-            }
+            },
+            children: []
         })
     })
 
     it('should parse nested elements', async () => {
         const svg = '<svg><circle cx="50" cy="50" r="40"/></svg>';
-        const result = await parserSVG(svg)
-        expect(result).toEqual({
+        const result = parserSVG(svg)
+        expect(result?.tagName).toBe('svg')
+        expect(result?.type).toBe('element')
+        expect(result?.attributes).toEqual({})
+        expect(result?.children).toHaveLength(1)
+        expect(result?.children?.[0]).toEqual({
             type: 'element',
-            tagName: 'svg',
-            attributes: {},
-            children: [
-                {
-                    type: 'element',
-                    tagName: 'circle',
-                    attributes: {
-                        cx: '50',
-                        cy: '50',
-                        r: '40'
-                    },
-                }
-            ]
+            tagName: 'circle',
+            attributes: {
+                cx: '50',
+                cy: '50',
+                r: '40'
+            },
+            children: []
         })
     })
 
     it('should parse text content', async () => {
         const svg = '<svg><text x="50" y="50">Hello, World!</text></svg>';
-        const result = await parserSVG(svg)
-        expect(result).toEqual({
-            type: 'element',
-            tagName: 'svg',
-            attributes: {},
-            children: [
-                {
-                    type: 'element',
-                    tagName: 'text',
-                    attributes: {
-                        x: '50',
-                        y: '50'
-                    },
-                    children: [{
-                        type: 'text',
-                        content: 'Hello, World!',
-                    }]
-                }
-            ]
-        })
+        const result = parserSVG(svg)
+        expect(result?.children?.[0]?.children).toHaveLength(1)
+        expect(result?.children?.[0]?.children?.[0]?.type).toBe('text')
+        expect(result?.children?.[0]?.children?.[0]?.tagName).toBe('text')
+        expect(result?.children?.[0]?.children?.[0]?.attributes).toEqual({})
+        expect(result?.children?.[0]?.children?.[0]?.children).toEqual([])
+        expect(result?.children?.[0]?.children?.[0]?.children).toEqual([])
+        expect(result?.children?.[0]?.children?.[0]?.content).toBe('Hello, World!')
+
     })
 
     it('should handle self-closing tags', async () => {
         const svg = '<svg><line x1="0" y1="0" x2="100" y2="100" /></svg>';
-        const result = await parserSVG(svg)
+        const result = parserSVG(svg)
         expect(result?.children).toHaveLength(1)
         expect(result?.children?.[0]).toEqual({
             type: 'element',
@@ -98,22 +86,19 @@ describe('parser', () => {
                 x1: '0',
                 y1: '0',
                 x2: '100',
-                y2: '100',
+                y2: '100'
             },
+            children: []
         })
     })
 
     it('should handle empty attributes', async () => {
         const svg = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>';
-        const result = await parserSVG(svg)
-        expect(result).toEqual({
-            type: 'element',
-            tagName: 'svg',
-            attributes: {
-                viewBox: '0 0 100 100',
-                xmlns: 'http://www.w3.org/2000/svg',
-                version: '1.1'
-            },
+        const result = parserSVG(svg)
+        expect(result?.attributes).toEqual({
+            viewBox: '0 0 100 100',
+            xmlns: 'http://www.w3.org/2000/svg',
+            version: '1.1'
         })
     })
 
@@ -124,30 +109,32 @@ describe('parser', () => {
               <circle cx="50" cy="50" r="20"/>
             </svg>
         `;
-        const result = await parserSVG(svg)
+        const result = parserSVG(svg)
         expect(result).toEqual({
-            type: 'element',
             tagName: 'svg',
+            type: 'element',
             attributes: {},
             children: [
                 {
-                    type: 'element',
                     tagName: 'rect',
+                    type: 'element',
                     attributes: {
                         x: '10',
                         y: '10',
                         width: '30',
                         height: '30'
                     },
+                    children: []
                 },
                 {
-                    type: 'element',
                     tagName: 'circle',
+                    type: 'element',
                     attributes: {
                         cx: '50',
                         cy: '50',
                         r: '20'
                     },
+                    children: []
                 }
             ]
         })
@@ -187,138 +174,313 @@ describe('parser', () => {
 
     it('should handle SVG with comments', async () => {
         const svg = '<svg><!-- This is a comment --><circle r="50"/></svg>';
-        const result = await parserSVG(svg)
-        expect(result?.children).toHaveLength(1)
-        expect(result?.children?.[0].tagName).toBe('circle')
-        expect(result?.children?.[0].attributes).toEqual({
-            r: '50'
+        const result = parserSVG(svg)
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {},
+            children: [{
+                type: 'element',
+                tagName: 'circle',
+                attributes: {
+                    r: '50'
+                },
+                children: []
+            }
+            ]
         })
     })
 
     it('should handle SVG with CDATA sections', async () => {
         const svg = '<svg><style><![CDATA[circle { fill: red; }]]></style><circle r="50"/></svg>';
-        const result = await parserSVG(svg)
+        const result = parserSVG(svg)
         expect(result?.children).toHaveLength(2)
-        expect(result?.children?.[0].tagName).toBe('style')
-        expect(result?.children?.[1].tagName).toBe('circle')
+
+        expect(result?.children?.[0]).toEqual({
+            type: 'element',
+            tagName: 'style',
+            attributes: {},
+            children: [
+                {
+                    tagName: 'text',
+                    type: 'cdata',
+                    attributes: {},
+                    children: [],
+                    cdataContent: 'circle { fill: red; }',
+                    content: 'circle { fill: red; }'
+                }
+            ]
+        })
+
+        expect(result?.children?.[1]).toEqual({
+            type: 'element',
+            tagName: 'circle',
+            attributes: {
+                r: '50'
+            },
+            children: []
+        })
     })
 
     it('should handle SVG with namespaces', async () => {
         const svg = '<svg xmlns:xlink="http://www.w3.org/1999/xlink"><image xlink:href="image.jpg"/></svg>';
-        const result = await parserSVG(svg)
-        expect(result?.attributes?.['xmlns:xlink']).toBe('http://www.w3.org/1999/xlink')
-        expect(result?.children).toHaveLength(1)
-        expect(result?.children?.[0]?.attributes?.['xlink:href']).toBe('image.jpg')
+        const result = parserSVG(svg)
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+                'xmlns:xlink': 'http://www.w3.org/1999/xlink'
+            },
+            children: [{
+                type: 'element',
+                tagName: 'image',
+                attributes: {
+                    'xlink:href': 'image.jpg'
+                },
+                children: []
+            }]
+        })
     })
 
     it('should handle malformed SVG without throwing error', async () => {
         const svg = '<svg><unclosed>';
-        expect(() => parserSVG(svg)).rejects.toThrowError('Invalid SVG content: Does not contain valid SVG elements')
+        const result = parserSVG(svg)
+        expect(result).toBeNull() // should handle malformed SVG without throwing error return null
     })
 
     it('should handle SVG with numeric attribute values', async () => {
         const svg = '<svg><rect x="10" y="10" width="100" height="100" opacity="0.5"/></svg>';
-        const result = await parserSVG(svg)
-        expect(result?.children).toHaveLength(1)
-        expect(result?.children?.[0]?.attributes).toEqual({
-            x: '10',
-            y: '10',
-            width: '100',
-            height: '100',
-            opacity: '0.5'
+        const result = parserSVG(svg)
+        expect(result?.children?.[0]).toEqual({
+            type: 'element',
+            tagName: 'rect',
+            attributes: {
+                x: '10',
+                y: '10',
+                width: '100',
+                height: '100',
+                opacity: '0.5'
+            },
+            children: []
         })
     })
 
     it('should handle SVG with embedded HTML', async () => {
         const svg = '<svg><foreignObject><div xmlns="http://www.w3.org/1999/xhtml">Hello</div></foreignObject></svg>';
-        const result = await parserSVG(svg)
-        expect(result?.children?.[0]?.tagName).toBe('foreignobject')
-        expect(result?.children?.[0]?.children?.[0]?.tagName).toBe('div')
-        expect(result?.children?.[0]?.children?.[0]?.children?.[0]).toEqual({
-            type: 'text',
-            content: 'Hello'
+        const result = parserSVG(svg)
+        expect(result?.children).toHaveLength(1)
+        expect(result?.children?.[0].tagName).toBe('foreignObject')
+        expect(result?.children?.[0].type).toBe('element')
+        expect(result?.children?.[0]?.children).toHaveLength(1)
+        expect(result?.children?.[0]?.children?.[0]).toEqual({
+            type: 'element',
+            tagName: 'div',
+            attributes: {
+                xmlns: 'http://www.w3.org/1999/xhtml'
+            },
+            children: [{
+                type: 'text',
+                content: 'Hello',
+                tagName: 'text',
+                attributes: {},
+                children: []
+            }],
         })
+
     })
-    it('should handle SVG with not svg tag', async () => {
+    it('should handle SVG with not svg tag to return null', async () => {
         const svg = '<notsvg><circle r="50"/></notsvg>';
-        expect(() => parserSVG(svg)).rejects.toThrowError('Invalid SVG content: Does not contain valid SVG elements')
+        const result = parserSVG(svg)
+        expect(result).toBeNull()
     })
 
-    it('should handle empty svg input', async () => {
-        expect(() => parserSVG('')).rejects.toThrowError('Invalid SVG content: Does not contain valid SVG elements')
-        expect(() => parserSVG('   ')).rejects.toThrowError('Invalid SVG content: Does not contain valid SVG elements');
+    it('should handle empty svg input to return null', async () => {
+        const result = parserSVG('  ')
+        expect(result).toBeNull()
     })
 
     it('should handle SVG fragments', async () => {
         const fragment = '<circle cx="50" cy="50" r="40"/>';
-        const result = await parserSVG(fragment);
-        expect(result?.tagName).toBe('svg');
-        expect(result?.children?.[0]?.tagName).toBe('circle');
+        const result = parserSVG(fragment);
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+                xmlns: 'http://www.w3.org/2000/svg'
+            },
+            children: [
+                {
+                    type: 'element',
+                    tagName: 'circle',
+                    attributes: {
+                        cx: '50',
+                        cy: '50',
+                        r: '40'
+                    },
+                    children: []
+                }
+            ]
+        })
     })
 
     it('should handle deeply nested elements', async () => {
         const svg = '<svg><g><g><g><circle r="10"/></g></g></g></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.children?.[0]?.children?.[0]?.children?.[0]?.children?.[0]?.tagName).toBe('circle');
-        expect(result?.children?.[0]?.children?.[0]?.children?.[0]?.children?.[0]?.attributes).toEqual({
-            r: '10'
+        const result = parserSVG(svg);
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+            },
+            children: [
+                {
+                    type: 'element',
+                    tagName: 'g',
+                    attributes: {},
+                    children: [
+                        {
+                            type: 'element',
+                            tagName: 'g',
+                            attributes: {},
+                            children: [
+                                {
+                                    type: 'element',
+                                    tagName: 'g',
+                                    attributes: {},
+                                    children: [
+                                        {
+                                            type: 'element',
+                                            tagName: 'circle',
+                                            attributes: {
+                                                r: '10'
+                                            },
+                                            children: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         })
     });
 
     it('should handle special characters in attributes and text', async () => {
         const svg = '<svg><text x="10" y="20" data-special="&lt;&gt;&amp;\'&quot;">Special &lt; &gt; &amp; \' " chars</text></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.children?.[0]?.attributes?.['data-special']).toBe('<>&\'"');
-        expect(result?.children?.[0]?.children?.[0]?.content).toBe('Special < > & \' " chars');
+        const result = parserSVG(svg);
+        expect(result?.children).toHaveLength(1)
+        expect(result?.children?.[0]).toEqual({
+            type: 'element',
+            tagName: 'text',
+            attributes: {
+                x: '10',
+                y: '20',
+                'data-special': '<>&\'"'
+            },
+            children: [{
+                type: 'text',
+                content: `Special < > & ' " chars`,
+                tagName: 'text',
+                attributes: {},
+                children: []
+            }],
+        })
     });
 
     it('should handle SVG with animation elements', async () => {
         const svg = '<svg><circle r="10"><animate attributeName="r" from="10" to="20" dur="1s" repeatCount="indefinite"/></circle></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.children?.[0]?.children?.[0]?.tagName).toBe('animate');
-        expect(result?.children?.[0]?.children?.[0]?.attributes).toEqual({
-            attributeName: 'r',
-            from: '10',
-            to: '20',
-            dur: '1s',
-            repeatCount: 'indefinite'
+        const result = parserSVG(svg);
+        expect(result?.children).toHaveLength(1)
+        expect(result?.children?.[0].children?.[0]).toEqual({
+            type: 'element',
+            tagName: 'animate',
+            attributes: {
+                attributeName: 'r',
+                from: '10',
+                to: '20',
+                dur: '1s',
+                repeatCount: 'indefinite'
+            },
+            children: []
         })
     });
 
     it('should handle SVG with XML declaration', async () => {
         const svg = '<?xml version="1.0" encoding="UTF-8"?><svg></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.type).toBe('element')
-        expect(result?.tagName).toBe('svg')
-        expect(result?.attributes).toEqual({
-            xmlns: 'http://www.w3.org/2000/svg'
+        const result = parserSVG(svg);
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+                xmlns: 'http://www.w3.org/2000/svg'
+            },
+            children: []
         })
     });
 
     it('should handle SVG with XML declaration and existing namespace', async () => {
         const svg = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg"></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.tagName).toBe('svg');
-        expect(result?.attributes?.xmlns).toBe('http://www.w3.org/2000/svg');
+        const result = parserSVG(svg);
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+                xmlns: 'http://www.w3.org/2000/svg'
+            },
+            children: []
+        })
     });
 
     it('should handle SVG without XML declaration but with namespace', async () => {
         const svg = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
-        const result = await parserSVG(svg);
-        expect(result?.tagName).toBe('svg');
-        expect(result?.attributes?.xmlns).toBe('http://www.w3.org/2000/svg');
+        const result = parserSVG(svg);
+        expect(result).toEqual({
+            type: 'element',
+            tagName: 'svg',
+            attributes: {
+                xmlns: 'http://www.w3.org/2000/svg'
+            },
+            children: []
+        })
     });
     it('should parse SVG imported as a string in SPA', async () => {
         const imported = await import("../assets/test.svg")
-        const result = await parserSVG(imported.default)
-        expect(result?.type).toBe('element')
+        const result = parserSVG(imported.default)
         expect(result?.tagName).toBe('svg')
+        expect(result?.type).toBe('element')
         expect(result?.attributes).toEqual({
             xmlns: 'http://www.w3.org/2000/svg',
             width: '200',
             height: '200',
-            viewBox: '0 0 200 200',
+            viewBox: '0 0 200 200'
         })
-        expect(result?.children).toHaveLength(5)
+        const lent = result?.children
+        expect(lent).toHaveLength(5)
+        expect(lent?.[0]).toEqual({
+            tagName: 'circle',
+            type: 'element',
+            attributes: { cx: '100', cy: '100', r: '90', fill: '#f0f0f0' },
+            children: []
+        })
+        expect(lent?.[1]).toEqual({
+            tagName: 'text',
+            type: 'element',
+            attributes: {
+                x: '40',
+                y: '110',
+                'font-family': 'monospace',
+                'font-size': '40',
+                fill: '#4a4a4a'
+            },
+            children: [
+                {
+                    tagName: 'text',
+                    type: 'text',
+                    attributes: {},
+                    children: [],
+                    content: '<svg>'
+                }
+            ]
+        })
     })
 })

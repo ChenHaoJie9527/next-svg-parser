@@ -1,30 +1,36 @@
 import { SVGNode } from "./types"
-export async function parserSVG(svgContent: string): Promise<SVGNode | null> {
+import { DOMParser as XMLDOMParser } from "xmldom"
 
-    const fullSvgContent = ensureFullSVG(svgContent)
-    let doc: Document;
+// 定义解析结果的类型
+type ParseResult = SVGNode | null;
 
-    const parser = new DOMParser()
-    doc = parser.parseFromString(fullSvgContent, "image/svg+xml")
+export function parserSVG(svgContent: string): ParseResult {
 
-    const errorNode = doc.querySelector('parsererror')
-    if (errorNode) {
-        throw new Error(`Invalid SVG: ${errorNode?.textContent}`);
+    try {
+        const fullSvgContent = ensureFullSVG(svgContent)
+        const xmlDomParser = new XMLDOMParser()
+        const doc = xmlDomParser.parseFromString(fullSvgContent, "image/svg+xml")
+        const json = domToJson(doc.documentElement)
+        return json
+    } catch (error) {
+        console.error((error as Error).message)
+        return null
     }
-    const json = domToJson(doc.documentElement)
 
-    return json
+
 }
 
 function ensureFullSVG(svgContent: string): string {
-    const trimmed = svgContent.trim()
+    // 移除注释
+    svgContent = svgContent.replace(/<!--(?:(?!<!--|]]>)[\s\S])*-->/g, '');
+    let trimmed = svgContent.trim()
     const svgRegex = /^\s*<svg(?:\s+[^>]*)?>[\s\S]*<\/svg>\s*$/i;
     // 检查是否已经是完整的 SVG
     if (svgRegex.test(trimmed)) {
         return trimmed
     }
     // 检查是否以有效的 SVG 元素开始
-    const validSvgElements = ['circle', 'rect', 'path', 'line', 'polyline', 'polygon', 'text', 'g', 'use'];
+    const validSvgElements = ['circle', 'rect', 'path', 'line', 'polyline', 'polygon', 'text', 'g', 'use', 'style'];
     const validStartRegex = new RegExp(`^\\s*<(${validSvgElements.join('|')})(?:\\s+[^>]*)?>`);
     // 如果是一个有效的svg元素，则应该被包含在svg标签中
     if (validStartRegex.test(trimmed)) {
@@ -51,41 +57,48 @@ function ensureSvgNamespace(svgString: string) {
 }
 
 function domToJson(node: Node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-        const content = node.textContent?.trim()
-        return content ? { type: 'text', content } : null
+    const jsonNode: SVGNode = {
+        tagName: (node as Element).tagName || 'text',
+        type: node.nodeType === 1 ? 'element' : 'text',
+        attributes: {},
+        children: []
     }
 
-    if (node.nodeType === Node.ELEMENT_NODE) {
+    // 处理element节点
+    if (node.nodeType === 1) {
         const element = node as Element
-        const result: SVGNode = {
-            type: 'element',
-            tagName: element.tagName.toLowerCase(),
-            attributes: {},
-            children: [],
-        }
-
-        // 解析属性
-        for (const attr of Array.from(element.attributes)) {
-            result.attributes![attr.name] = attr.value
-        }
-
-        //解析子节点
-        element.childNodes.forEach(child => {
-            const childRes = domToJson(child)
-            if (childRes) {
-                result.children?.push(childRes)
-            }
+        Array.from(element.attributes).forEach(attr => {
+            jsonNode.attributes![attr.name] = attr.value
         })
+    }
 
-        // 如果没有子节点，删除 children 属性
-        if (result?.children?.length === 0) {
-            delete result.children;
-        }
+    // 处理text节点
+    if (node.nodeType === 3) {
+        jsonNode.content = node.textContent || ''
+        return jsonNode
+    }
 
-        return result
+    // 处理 CDATA 节点
+    if (node.nodeType === 4) {
+        jsonNode.type = 'cdata'
+        jsonNode.cdataContent = node.nodeValue || ''
+        jsonNode.content = node.nodeValue || ''
 
     }
 
-    return null
+    //递归处理子节点
+    if (node.childNodes) {
+        Array.from(node.childNodes).forEach(child => {
+            if (child.nodeType !== 8) {
+                const childJsonNode = domToJson(child)
+                if (childJsonNode?.type === 'element' || ((childJsonNode?.type === 'text' || childJsonNode?.type === 'cdata') && childJsonNode.content?.trim())) {
+                    jsonNode.children?.push(childJsonNode)
+                }
+            }
+
+        })
+    }
+
+
+    return jsonNode
 }

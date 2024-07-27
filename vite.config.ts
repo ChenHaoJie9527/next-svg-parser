@@ -13,7 +13,7 @@ export default defineConfig({
             formats: ["es", "umd"]
         },
         rollupOptions: {
-            external: [/^vitest/, /^node:/, 'fs', 'path', 'fs/promise', 'assets/**/*'],
+            external: ['vitest', /^node:/, 'fs', 'path', 'fs/promise', 'assets/**/*'],
             plugins: [
                 terser(),
             ],
