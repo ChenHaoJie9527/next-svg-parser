@@ -5,19 +5,28 @@ import { terser } from "rollup-plugin-terser"
 export default defineConfig({
     build: {
         lib: {
-            entry: path.resolve(__dirname, "src/index.ts"),
-            name: "next-svg-parser",
-            fileName(format, entryName) {
-                return `index.${format}.js`
+            entry: {
+                index: path.resolve(__dirname, "src/index.ts"),
+                cli: path.resolve(__dirname, "src/cli.ts")
             },
+            name: "next-svg-parser",
+            fileName: (format, entryName) => `${entryName}.${format}.js`,
             formats: ["es", "umd"]
         },
         rollupOptions: {
-            external: ['vitest', /^node:/, 'fs', 'path', 'fs/promise', 'assets/**/*'],
+            external: ['vitest', 'fs', 'path', "xmldom", 'fs/promise', "memfs", 'assets/**/*', "commander"],
             plugins: [
                 terser(),
             ],
+            output: {
+                globals: {
+                    commander: 'commander',
+                    xmldom: 'xmldom',
+                    memfs: 'memfs'
+                }
+            }
         },
+        target: 'node16',
         sourcemap: true,
         // 明确指定构建输出目录
         outDir: 'dist',
