@@ -18,7 +18,9 @@ import { parserSVG } from "./index";
   }
 
   try {
-    const svgContent = await fs.readFile(inputFile, "utf8");
+    const svgContent = await fs.readFile(inputFile, {
+      encoding: "utf-8",
+    });
     console.log("svgContent =>", svgContent);
     const jsonData = parserSVG(svgContent);
     console.log("jsonData >", jsonData);
