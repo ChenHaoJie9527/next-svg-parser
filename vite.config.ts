@@ -14,13 +14,12 @@ export default defineConfig({
             formats: ['es', 'cjs']
         },
         rollupOptions: {
-            external: ['vitest', 'fs', 'path', "xmldom", 'fs/promise', "memfs", 'assets/**/*', "commander"],
+            external: ['vitest', 'fs', 'path', "xmldom", 'fs/promise', "memfs", 'assets/**/*',],
             plugins: [
                 terser(),
             ],
             output: {
                 globals: {
-                    commander: 'commander',
                     xmldom: 'xmldom',
                     memfs: 'memfs'
                 }
