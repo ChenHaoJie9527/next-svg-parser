@@ -10,8 +10,8 @@ export default defineConfig({
                 cli: path.resolve(__dirname, "src/cli.js")
             },
             name: "next-svg-parser",
-            fileName: (format, entryName) => `${entryName}.${format}.js`,
-            formats: ["es"]
+            fileName: (format, entryName) => entryName === 'cli' ? 'cli.js' : `${entryName}.${format}.js`,
+            formats: ['es', 'cjs']
         },
         rollupOptions: {
             external: ['vitest', 'fs', 'path', "xmldom", 'fs/promise', "memfs", 'assets/**/*', "commander"],
@@ -27,7 +27,7 @@ export default defineConfig({
             }
         },
         target: 'node16',
-        sourcemap: true,
+        sourcemap: false,
         // 明确指定构建输出目录
         outDir: 'dist',
         // 构建前清空输出目录

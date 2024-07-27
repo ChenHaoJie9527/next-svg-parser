@@ -1,6 +1,6 @@
 {
   "name": "next-svg-parser",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A robust SVG to JSON parser built with TypeScript",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
@@ -8,8 +8,7 @@
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
   "bin": {
-    "next-svg-parser": "./dist/cli.js",
-    "svg-to-json": "./dist/cli.js"
+    "next-svg-parser": "./dist/cli.js"
   },
   "type": "module",
   "scripts": {
