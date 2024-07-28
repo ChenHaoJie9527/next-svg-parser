@@ -2,26 +2,39 @@
 
 import fs from "fs";
 import { parserSVG } from "./index";
+import path from "path";
 
-const inputFile = process.argv[2];
-const outputFile = process.argv[3];
+const input = process.argv[2];
+const output = process.argv[3];
 
-if (!inputFile || !outputFile) {
+if (!input || !output) {
   console.error(
     "Usage: next-svg-parser <input-svg-file-or-directory> <output-json-file-or-directory>"
   );
   process.exit(1);
 }
 
-function processFile(inputFile, outputDir) {
+function processFile(inputFile, output) {
   try {
     const svgContent = fs.readFileSync(inputFile, "utf8");
     const parsedSVG = parserSVG(svgContent);
 
-    // 保持文件名一致,只改变扩展名
-    const fileName = path.basename(inputFile);
-    const jsonFileName = fileName.replace(/\.svg$/i, ".json");
-    const outputFile = path.join(outputDir, jsonFileName);
+    let outputFile, outputDir;
+
+    // 获取输入文件的基本名称（不包含扩展名）
+    const inputBaseName = path.basename(inputFile, ".svg");
+    // 检查输出是文件还是目录
+    if (path.extname(output) === "") {
+      // 如果没有扩展名，视为目录
+      outputDir = output;
+      outputFile = path.join(output, `${inputBaseName}.json`);
+    } else {
+      // 如果有扩展名，视为文件
+      outputFile = output;
+      outputDir = path.dirname(output);
+    }
+    // 确保输出目录存在
+    fs.mkdirSync(outputDir, { recursive: true });
 
     fs.writeFileSync(outputFile, JSON.stringify(parsedSVG, null, 2));
     console.log(`Successfully parsed ${inputFile} to ${outputFile}`);
@@ -35,10 +48,12 @@ function processDirectory(inputDir, outputDir) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  fs.readdirSync(inputDir).forEach(file => {
-    if (path.extname(file).toLowerCase() === '.svg') {
+  fs.readdirSync(inputDir).forEach((file) => {
+    if (path.extname(file).toLowerCase() === ".svg") {
       const inputFile = path.join(inputDir, file);
-      processFile(inputFile, outputDir);
+      const jsonFileName = path.basename(file, ".svg") + ".json";
+      const outputFile = path.join(outputDir, jsonFileName);
+      processFile(inputFile, outputFile);
     }
   });
 }
@@ -46,6 +61,17 @@ function processDirectory(inputDir, outputDir) {
 if (fs.statSync(input).isDirectory()) {
   processDirectory(input, output);
 } else {
-  const outputDir = path.dirname(output);
-  processFile(input, outputDir);
+  // 处理单个文件
+  let outputFile = output;
+  if (fs.existsSync(output) && fs.statSync(output).isDirectory()) {
+    // 如果输出是目录,在其中创建与输入同名的json文件
+    const jsonFileName = path.basename(input, ".svg") + ".json";
+    outputFile = path.join(output, jsonFileName);
+  } else if (!output.endsWith(".json")) {
+    // '/' 表示目录
+    if (!output.endsWith("/")) {
+      outputFile += ".json";
+    }
+  }
+  processFile(input, outputFile);
 }

@@ -1,0 +1,99 @@
+{
+  "tagName": "svg",
+  "type": "element",
+  "attributes": {
+    "xmlns": "http://www.w3.org/2000/svg",
+    "width": "200",
+    "height": "200",
+    "viewBox": "0 0 200 200"
+  },
+  "children": [
+    {
+      "tagName": "circle",
+      "type": "element",
+      "attributes": {
+        "cx": "100",
+        "cy": "100",
+        "r": "90",
+        "fill": "#f0f0f0"
+      },
+      "children": []
+    },
+    {
+      "tagName": "text",
+      "type": "element",
+      "attributes": {
+        "x": "40",
+        "y": "110",
+        "font-family": "monospace",
+        "font-size": "40",
+        "fill": "#4a4a4a"
+      },
+      "children": [
+        {
+          "tagName": "text",
+          "type": "text",
+          "attributes": {},
+          "children": [],
+          "content": "<svg>"
+        }
+      ]
+    },
+    {
+      "tagName": "path",
+      "type": "element",
+      "attributes": {
+        "d": "M80 100 L120 100 M110 90 L120 100 L110 110",
+        "stroke": "#2196f3",
+        "stroke-width": "4",
+        "fill": "none"
+      },
+      "children": []
+    },
+    {
+      "tagName": "text",
+      "type": "element",
+      "attributes": {
+        "x": "130",
+        "y": "110",
+        "font-family": "monospace",
+        "font-size": "40",
+        "fill": "#4a4a4a"
+      },
+      "children": [
+        {
+          "tagName": "text",
+          "type": "text",
+          "attributes": {},
+          "children": [],
+          "content": "{}"
+        }
+      ]
+    },
+    {
+      "tagName": "path",
+      "type": "element",
+      "attributes": {
+        "d": "M30 130 Q100 170 170 130",
+        "stroke": "#2196f3",
+        "stroke-width": "2",
+        "fill": "none",
+        "stroke-dasharray": "5,5"
+      },
+      "children": [
+        {
+          "tagName": "animate",
+          "type": "element",
+          "attributes": {
+            "attributeName": "stroke-dashoffset",
+            "from": "10",
+            "to": "0",
+            "dur": "2s",
+            "repeatCount": "indefinite"
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
