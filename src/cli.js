@@ -1,33 +1,22 @@
 #!/usr/bin/env node
 
-// const fs = require('fs');
-import fs from "fs/promises";
-// const { parserSVG } = require('./index'); // 你的主要解析函数
+import fs from "fs";
 import { parserSVG } from "./index";
 
-(async () => {
-  console.log("11111111111111111");
-  const inputFile = process.argv[2];
-  const outputFile = process.argv[3];
-  console.log("inputFile =>", inputFile);
-  console.log("outputFile =>", outputFile);
+const inputFile = process.argv[2];
+const outputFile = process.argv[3];
 
-  if (!inputFile || !outputFile) {
-    console.error("Usage: next-svg-parser <input-svg-file> <output-json-file>");
-    process.exit(1);
-  }
+if (!inputFile || !outputFile) {
+  console.error("Usage: next-svg-parser <input-svg-file> <output-json-file>");
+  process.exit(1);
+}
 
-  try {
-    const svgContent = await fs.readFile(inputFile, {
-      encoding: "utf-8",
-    });
-    console.log("svgContent =>", svgContent);
-    const jsonData = parserSVG(svgContent);
-    console.log("jsonData >", jsonData);
-    await fs.writeFile(outputFile, JSON.stringify(jsonData, null, 2));
-    console.log(`Successfully parsed ${inputFile} to ${outputFile}`);
-  } catch (error) {
-    console.error("Error:", error.message);
-    process.exit(1);
-  }
-})();
+try {
+  const svgContent = fs.readFileSync(inputFile, "utf8");
+  const parsedSVG = parserSVG(svgContent);
+  fs.writeFileSync(outputFile, JSON.stringify(parsedSVG, null, 2));
+  console.log(`Successfully parsed ${inputFile} to ${outputFile}`);
+} catch (error) {
+  console.error("Error:", error.message);
+  process.exit(1);
+}
