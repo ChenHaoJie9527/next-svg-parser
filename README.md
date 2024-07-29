@@ -40,84 +40,180 @@ For more information, see the [npm package page](https://www.npmjs.com/package/n
 
 ## Usage
 
-```ts
-import { parseSVG } from 'next-svg-parser';
+1. When building single page applications **(SPA)** using **Vite**, you should:
 
-const svgString = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrows-up-down-square">
-    <path d="m6 9 3-3 3 3"/>
-    <path d="M9 6v6"/>
-    <rect width="20" height="20" x="2" y="2" rx="2"/>
-    <path d="M15 18v-6"/>
-    <path d="m18 15-3 3-3-3"/>
-  </svg>
-`;
+   ```html
+   // react.svg
+   <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+     <circle cx="100" cy="100" r="90" fill="#f0f0f0"/>
+     <text x="40" y="110" font-family="monospace" font-size="40" fill="#4a4a4a">&lt;svg&gt;</text>
+     <path d="M80 100 L120 100 M110 90 L120 100 L110 110" stroke="#2196f3" stroke-width="4" fill="none"/>
+     <text x="130" y="110" font-family="monospace" font-size="40" fill="#4a4a4a">{}</text>
+     <path d="M30 130 Q100 170 170 130" stroke="#2196f3" stroke-width="2" fill="none" stroke-dasharray="5,5">
+       <animate attributeName="stroke-dashoffset" from="10" to="0" dur="2s" repeatCount="indefinite"/>
+     </path>
+   </svg>
+   ```
 
-const result = parseSVG(svgString);
-console.log(result);
-```
+   ```tsx
+   // App.tsx
+   import reactSVG from "./assets/react.svg?raw"
+   import {parserSVG} from "next-svg-parser"
+   
+   function App() {
+   	const svgJosn = parserSVG(reactSVG)
+   }
+   
+   ```
 
-## Output
+   result:
 
-```json
-{
-  "type": "element",
-  "tagName": "svg",
-  "attributes": {
-    "xmlns": "http://www.w3.org/2000/svg",
-    "width": "24",
-    "height": "24",
-    "viewBox": "0 0 24 24",
-    "fill": "none",
-    "stroke": "currentColor",
-    "stroke-width": "2",
-    "stroke-linecap": "round",
-    "stroke-linejoin": "round",
-    "class": "lucide lucide-arrows-up-down-square"
-  },
-  "children": [
-    {
-      "type": "element",
-      "tagName": "path",
-      "attributes": {
-        "d": "m6 9 3-3 3 3"
-      }
-    },
-    {
-      "type": "element",
-      "tagName": "path",
-      "attributes": {
-        "d": "M9 6v6"
-      }
-    },
-    {
-      "type": "element",
-      "tagName": "rect",
-      "attributes": {
-        "width": "20",
-        "height": "20",
-        "x": "2",
-        "y": "2",
-        "rx": "2"
-      }
-    },
-    {
-      "type": "element",
-      "tagName": "path",
-      "attributes": {
-        "d": "M15 18v-6"
-      }
-    },
-    {
-      "type": "element",
-      "tagName": "path",
-      "attributes": {
-        "d": "m18 15-3 3-3-3"
-      }
-    }
-  ]
-}
-```
+   ```json
+   {
+       "tagName": "svg",
+       "type": "element",
+       "attributes": {
+           "xmlns": "http://www.w3.org/2000/svg",
+           "width": "200",
+           "height": "200",
+           "viewBox": "0 0 200 200"
+       },
+       "children": [
+           {
+               "tagName": "circle",
+               "type": "element",
+               "attributes": {
+                   "cx": "100",
+                   "cy": "100",
+                   "r": "90",
+                   "fill": "#f0f0f0"
+               },
+               "children": []
+           },
+           {
+               "tagName": "text",
+               "type": "element",
+               "attributes": {
+                   "x": "40",
+                   "y": "110",
+                   "font-family": "monospace",
+                   "font-size": "40",
+                   "fill": "#4a4a4a"
+               },
+               "children": [
+                   {
+                       "tagName": "text",
+                       "type": "text",
+                       "attributes": {},
+                       "children": [],
+                       "content": "<svg>"
+                   }
+               ]
+           },
+           {
+               "tagName": "path",
+               "type": "element",
+               "attributes": {
+                   "d": "M80 100 L120 100 M110 90 L120 100 L110 110",
+                   "stroke": "#2196f3",
+                   "stroke-width": "4",
+                   "fill": "none"
+               },
+               "children": []
+           },
+           {
+               "tagName": "text",
+               "type": "element",
+               "attributes": {
+                   "x": "130",
+                   "y": "110",
+                   "font-family": "monospace",
+                   "font-size": "40",
+                   "fill": "#4a4a4a"
+               },
+               "children": [
+                   {
+                       "tagName": "text",
+                       "type": "text",
+                       "attributes": {},
+                       "children": [],
+                       "content": "{}"
+                   }
+               ]
+           },
+           {
+               "tagName": "path",
+               "type": "element",
+               "attributes": {
+                   "d": "M30 130 Q100 170 170 130",
+                   "stroke": "#2196f3",
+                   "stroke-width": "2",
+                   "fill": "none",
+                   "stroke-dasharray": "5,5"
+               },
+               "children": [
+                   {
+                       "tagName": "animate",
+                       "type": "element",
+                       "attributes": {
+                           "attributeName": "stroke-dashoffset",
+                           "from": "10",
+                           "to": "0",
+                           "dur": "2s",
+                           "repeatCount": "indefinite"
+                       },
+                       "children": []
+                   }
+               ]
+           }
+       ]
+   }
+   ```
+
+2. Use the cli command line via node：
+
+   - Add script directives to the scripts option of your `package.json` file
+
+     ```json
+     "scripts": {
+         "generate-svg-json": "next-svg-parser input output"
+       }
+     ```
+
+   - Some application scenarios
+
+     - ```json
+       Processing a single file, specifying the output directory
+       
+       "generate-svg-json": "next-svg-parser src/assets/react.svg src/json/react.json"
+       or
+       "generate-svg-json": "next-svg-parser src/assets/react.svg src/json"
+       ```
+
+     - ```json
+       Processing the entire catalogue
+       "generate-svg-json": "next-svg-parser src/assets src/json"
+       ```
+
+     - ```json
+       Process a single file, specify a specific output file.
+       "generate-svg-json": "next-svg-parser src/assets/test.svg src/json/test.json"
+       ```
+
+     - ```json
+       Process individual files to a specified non-existent directory (automatically creates the directory and writes to the file)
+       
+       "generate-svg-json": "next-svg-parser src/assets/test.svg src/json1/test.svg"
+       
+       reslut: src/json1/test.svg
+       ```
+
+     - ```json
+       Dispose of the whole directory, to a non-existent directory (create this directory and write to it)
+       "generate-svg-json": "next-svg-parser src/assets src/json3/"
+       
+       result: src/json3/**.json
+       ```
 
 ## API
 
@@ -130,13 +226,14 @@ Parses an SVG string and returns a JSON representation of the SVG structure.
 
 ## Types
 
-```
-typescriptCopyinterface SVGNode {
-  type: 'element' | 'text';
-  tagName?: string;
-  attributes?: { [key: string]: string };
-  children?: SVGNode[];
-  content?: string;
+```ts
+export interface SVGNode {
+    type: 'element' | 'text' | 'cdata';
+    tagName?: string;
+    attributes?: { [key: string]: string };
+    children?: SVGNode[];
+    content?: string;
+    cdataContent?: string;
 }
 ```
 
